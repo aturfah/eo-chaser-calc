@@ -224,7 +224,6 @@ class App extends Component {
   }
 
   generateSimulationResults() {
-    console.log(this.state.simulationResults);
     const breakdownList = [];
     const breakdownKeys = Object.keys(this.state.simulationResults.probs);
     breakdownKeys.sort((a, b) => parseInt(a) - parseInt(b))

@@ -1,11 +1,27 @@
 import './App.css';
 import React, {Component} from 'react';
 
+function sum(arr) {
+  return arr.reduce((a, b) => {
+    return Number(a) + Number(b);
+  });
+}
+
+function cumulSum(arr) {
+  const output = []
+  let runningSum = 0;
+  for (let idx = 0; idx < arr.length; ++idx) {
+    runningSum += arr[idx];
+    output.push(runningSum)
+  }
+  return output;
+}
+
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      numSimul: 5000,
+      numSimul: 1000,
       maxFollowUp: 4,
       chanceReduction: 0.25,
       numAttacks: 1,
@@ -66,13 +82,10 @@ class App extends Component {
   }
 
   normalizeAttackProbability() {
-    const totalProb = this.state.attackProbability.reduce((a, b) => {
-      return Number(a) + Number(b);
-    })
+    const totalProb = sum(this.state.attackProbability);
 
     const newState = this.state;
     newState.attackProbability.forEach((val, idx) => {
-      console.log("IDX", idx)
       newState.attackProbability[idx] = newState.attackProbability[idx] / totalProb;
     })
     this.setState(newState);
@@ -93,7 +106,7 @@ class App extends Component {
              onChange={(e) => this.modifyAttackProbability(0, e.target.value)}/></td>
     </tr>)
 
-    const deleteButton = <button onClick={() => this.removeAttack()}>Remove Row</button>
+    const deleteButton = <button onClick={() => this.removeAttack()}>Del Row</button>
     for (let i = 1; i < this.state.numAttacks; ++i) {
       output.push(<tr>
         <td>{(i == 1 ? deleteButton : <></>)}</td>
@@ -141,8 +154,50 @@ class App extends Component {
       return;
     }
     
+    // Verify that probability normalized
+    if (sum(this.state.attackProbability) !== 1) {
+      this.setState({running: false});
+      alert("Check that Attack Probabilities sum to 1 (i.e. click the Normalize button)")
+      return;
+    }
+
+    // Now we do the sampling
+    const results = [];
+    const probCDF = cumulSum(this.state.attackProbability);
+    for (let index = 0; index < numSimul; ++index) {
+      // First we draw the number of attacks
+      let randVal = Math.random();
+      let numAttacks = 0;
+      while (probCDF[numAttacks] <= randVal) {
+        numAttacks += 1;
+      }
+      numAttacks += 1; // Array is 0-indexed so map to number of attacks
+      
+      // Now calculate for each one
+      let numProcs = 0;
+      let remainingProb = 1;
+      for (let i = 0; i < numAttacks; ++i) {
+        const probDraw = Math.random();
+        if (probDraw < remainingProb) {
+          // We got a successful follow-up
+          numProcs += 1;
+          remainingProb -= chanceReduction;
+        }
+
+        if (numProcs >= maxFollowUp) {
+          // No more procs we've maxed out
+          break
+        } if (remainingProb <= 0) {
+          // Impossible to proc more so just stop
+          break
+        }
+      }
+
+      results.push(numProcs)
+    }
 
 
+    alert("Completed!")
     this.setState({running: false});
   }
 
@@ -174,13 +229,9 @@ class App extends Component {
             <td></td>
           </tr>
           {this.buildNumAttacksDropdownRows()}
-          <tr>
-            <td colSpan={4}>
-              {(this.state.running ? <button disabled>Calculate!</button> :
-                                    <button onClick={() => this.runSimulation()}>Calculate!</button>)}
-            </td>
-          </tr>
         </table>
+        {(this.state.running ? <button className='run-button' disabled>Calculate!</button> :
+                                    <button className='run-button' onClick={() => this.runSimulation()}>Calculate!</button>)}
         
       </div>
     );

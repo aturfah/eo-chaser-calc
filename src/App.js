@@ -157,7 +157,7 @@ class App extends Component {
     }
     
     // Verify that probability normalized
-    if (sum(this.state.attackProbability) !== 1) {
+    if (Math.abs(sum(this.state.attackProbability) - 1) > 1e-10) { // Arbitrary precision
       this.setState({running: false});
       alert("Check that Attack Probabilities sum to 1 (i.e. click the Normalize button)")
       return;

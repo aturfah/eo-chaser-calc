@@ -1,6 +1,6 @@
 # EO Chaser Calculator
 
-**Link**: [aturfah.github.io/eo-chaser-calc](aturfah.github.io/eo-chaser-calc)
+**Link**: [https://aturfah.github.io/eo-chaser-calc](https://aturfah.github.io/eo-chaser-calc)
 
 For Etrian Odyssey games, calculate the expected number of follow-up attacks for chaser-type skills.
 

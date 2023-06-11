@@ -21,9 +21,9 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      numSimul: 1000,
+      numSimul: 5000,
       maxFollowUp: 4,
-      chanceReduction: 0.25,
+      chanceReduction: 0.13,
       numAttacks: 1,
       attackProbability: [1],
       running: false,
@@ -68,7 +68,7 @@ class App extends Component {
     let newVal = 0;
     if (newValue === '') {
       newVal = 0;
-    } else if (!newValue.endsWith(".")) {
+    } else if (!newValue.endsWith(".") & !newValue.endsWith("0")) {
       newVal = Number(newValue);
       if (isNaN(newVal)) {
         return;
@@ -229,16 +229,26 @@ class App extends Component {
     const breakdownKeys = Object.keys(this.state.simulationResults.probs);
     breakdownKeys.sort((a, b) => parseInt(a) - parseInt(b))
     breakdownKeys.forEach(bkdnKey => {
-      breakdownList.push(<li><b>{bkdnKey}:</b> {this.state.simulationResults.probs[bkdnKey]}</li>)
+      breakdownList.push(<tr>
+        <td>{bkdnKey}</td>
+        <td>{this.state.simulationResults.probs[bkdnKey]}</td>
+      </tr>)
     })
 
     return <div className='results-div'>
       <h2>Simulation Results:</h2>
-      <p><b>Mean # Follow-Ups:</b> {Math.round(100 * this.state.simulationResults.mean) / 100}</p>
-      <b>Breakdown (# Follow-Ups: Probability)</b>
-        <ul>          
-            {breakdownList}
-        </ul>
+      <p><b>Average # Follow-Ups:</b> {Math.round(100 * this.state.simulationResults.mean) / 100}</p>
+      <table>
+        <thead>
+          <tr>
+            <th># Follow-Ups</th><th>Probability</th>
+          </tr>
+        </thead>
+        <tbody>
+          {breakdownList}
+        </tbody>
+      </table>
+
     </div>
   }
 

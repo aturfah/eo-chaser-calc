@@ -30,14 +30,14 @@ Below I will provide an brief explanation of the arguments the page accepts.
 
 ## Logic
 
-The procedure for generating the the number of follow-ups for a single step is described below. This processs is repeated `Number of Simulations` number of times.
+The procedure for generating the the number of follow-ups for a single step is described below. This processs is repeated `Number of Simulations` times.
 
 1. Draw the number of attacks that cac proc a follow-up according to the specified distribution (`Number of Attacks (Probability)`)
 2. Initialize follow-up probability (FP) to 100% and the follow-up counter to 0
 3. For each attack that can potentially proc a follow-up
    1. This attack results in a follow-up with probability FP
    2. If a follow-up occurs, increment the follow-up counter and decrease the FP by `Chance Reduction`
-   3. If FP < 0 or we have reached the maxmimum number of follow-up attacks, stop
+   3. If FP < 0 or we have reached `Maximum Follow-Ups` follow-up attacks, stop
 4. Return the value of the follow-up counter
 
 The exact implementation details can be found in the `runSimulation` function from `/src/App.js`

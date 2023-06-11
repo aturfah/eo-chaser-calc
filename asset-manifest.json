@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/eo-chaser-calc/static/css/main.8a8bbe45.css",
+    "main.js": "/eo-chaser-calc/static/js/main.9154b26d.js",
+    "static/js/787.0929cf26.chunk.js": "/eo-chaser-calc/static/js/787.0929cf26.chunk.js",
+    "index.html": "/eo-chaser-calc/index.html",
+    "main.8a8bbe45.css.map": "/eo-chaser-calc/static/css/main.8a8bbe45.css.map",
+    "main.9154b26d.js.map": "/eo-chaser-calc/static/js/main.9154b26d.js.map",
+    "787.0929cf26.chunk.js.map": "/eo-chaser-calc/static/js/787.0929cf26.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8a8bbe45.css",
+    "static/js/main.9154b26d.js"
+  ]
+}

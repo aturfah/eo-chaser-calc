@@ -113,7 +113,7 @@ class App extends Component {
         <td>{i+1}</td>
         <td><input value={this.state.attackProbability[i]}
                    onChange={(e) => this.modifyAttackProbability(i, e.target.value)} /></td>
-        <td>{(i == 1 ? deleteButton : <></>)}</td>
+        <td>{(i === 1 ? deleteButton : <></>)}</td>
       </tr>)
     }
 

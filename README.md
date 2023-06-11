@@ -22,4 +22,4 @@ Below I will provide an brief explanation of the arguments the page accepts.
     - 6 Hits: 1.98%
     - 7 Hits: 1.10%
 - Inputs look like this
-![README_img.png]()
+![Alt Text](README_img.png)

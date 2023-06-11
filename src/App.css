@@ -4,14 +4,24 @@
 
 
 table.param-table {
-  width: 60%;
-  margin-left: 20%;
+  margin: auto;
 }
 
 table.param-table td {
-  text-align: left;
+  text-align: right;
+  padding-left: 10px;
+}
+
+table.param-table td {
+  margin: auto;
 }
 
 button.run-button {
   margin: auto;
+}
+
+div.results-div {
+  margin: auto;
+  width: 20%;
+  text-align: left;
 }

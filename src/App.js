@@ -26,7 +26,8 @@ class App extends Component {
       chanceReduction: 0.25,
       numAttacks: 1,
       attackProbability: [1],
-      running: false
+      running: false,
+      simulationResults: null
     }
   }
 
@@ -94,32 +95,33 @@ class App extends Component {
   buildNumAttacksDropdownRows() {
     const output = []
     output.push(<tr>
-      <td></td>
       <td><label>Number of Attacks</label></td>
       <td><i>Probability as Decimal (ex: 0.5)</i></td>
+      <td></td>
     </tr>)
     output.push(<tr>
-      <td><button onClick={() => this.addAttack()}>Add Row</button></td>
       <td>1</td>
       <td><input
              value={this.state.attackProbability[0]} 
              onChange={(e) => this.modifyAttackProbability(0, e.target.value)}/></td>
+      <td><button onClick={() => this.addAttack()}>Add Row</button></td>
     </tr>)
 
     const deleteButton = <button onClick={() => this.removeAttack()}>Del Row</button>
     for (let i = 1; i < this.state.numAttacks; ++i) {
       output.push(<tr>
-        <td>{(i == 1 ? deleteButton : <></>)}</td>
         <td>{i+1}</td>
         <td><input value={this.state.attackProbability[i]}
                    onChange={(e) => this.modifyAttackProbability(i, e.target.value)} /></td>
+        <td>{(i == 1 ? deleteButton : <></>)}</td>
       </tr>)
     }
 
     if (this.state.numAttacks > 1) {
       output.push(<tr>
-        <td></td><td></td>
+        <td></td>
         <td><button onClick={() => this.normalizeAttackProbability()}>Normalize Probabilities</button></td>
+        <td></td>
       </tr>)
     }
 
@@ -196,9 +198,48 @@ class App extends Component {
       results.push(numProcs)
     }
 
+    // Get the probability of the number of attacks
+    const counter = {};
+    results.forEach(ele => {
+        if (counter[ele]) {
+            counter[ele] += 1;
+        } else {
+            counter[ele] = 1;
+        }
+    });
+    Object.keys(counter).forEach(val => {
+      counter[val] = counter[val] / results.length
+    })
 
-    alert("Completed!")
-    this.setState({running: false});
+    // Get the mean
+    const meanValue = sum(results) / results.length
+    
+    this.setState({
+      running: false,
+      simulationResults: {
+        mean: meanValue,
+        probs: counter
+      }
+    });
+  }
+
+  generateSimulationResults() {
+    console.log(this.state.simulationResults);
+    const breakdownList = [];
+    const breakdownKeys = Object.keys(this.state.simulationResults.probs);
+    breakdownKeys.sort((a, b) => parseInt(a) - parseInt(b))
+    breakdownKeys.forEach(bkdnKey => {
+      breakdownList.push(<li><b>{bkdnKey}:</b> {this.state.simulationResults.probs[bkdnKey]}</li>)
+    })
+
+    return <div className='results-div'>
+      <h2>Simulation Results:</h2>
+      <p><b>Mean # Follow-Ups:</b> {Math.round(100 * this.state.simulationResults.mean) / 100}</p>
+      <b>Breakdown (# Follow-Ups: Probability)</b>
+        <ul>          
+            {breakdownList}
+        </ul>
+    </div>
   }
 
   render() {
@@ -208,31 +249,34 @@ class App extends Component {
         <p>Please check out <a href="https://github.com/aturfah/eo-chaser-calc#readme">the project README</a> for details on what each argument means.</p>
         <table className='param-table'>
           <tr>
-            <td></td>
             <td><label>Number of Simulations:</label></td>
             <td><input value={this.state.numSimul}
                  onChange={e => this.modifyOtherStateVariable('numSimul', e.target.value)} /></td>
             <td></td>
+            <td></td>
           </tr>
           <tr>
-            <td></td>
             <td><label>Maximum Follow-Ups:</label></td>
             <td><input value={this.state.maxFollowUp}
                        onChange={e => this.modifyOtherStateVariable('maxFollowUp', e.target.value)} /></td>
             <td></td>
+            <td></td>
           </tr>
           <tr>
-            <td></td>
             <td><label>Chance Reduction (as decimal):</label></td>
             <td><input value={this.state.chanceReduction}
                        onChange={e => this.modifyOtherStateVariable('chanceReduction', e.target.value)} /></td>
+            <td></td>
             <td></td>
           </tr>
           {this.buildNumAttacksDropdownRows()}
         </table>
         {(this.state.running ? <button className='run-button' disabled>Calculate!</button> :
                                     <button className='run-button' onClick={() => this.runSimulation()}>Calculate!</button>)}
-        
+        <div>
+          {(this.state.simulationResults === null ? <i>Click Calculate button to get results</i> : this.generateSimulationResults())}
+        </div>
+
       </div>
     );
   }

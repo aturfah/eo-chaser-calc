@@ -245,7 +245,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Hello world!</h1>
+        <h1>Etrian Odyssey Follow-Up Attack Calculator</h1>
         <p>Please check out <a href="https://github.com/aturfah/eo-chaser-calc#readme">the project README</a> for details on what each argument means.</p>
         <table className='param-table'>
           <tr>

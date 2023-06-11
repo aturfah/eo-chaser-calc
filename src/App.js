@@ -5,9 +5,23 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
+      numSimul: 5000,
+      maxFollowUp: 4,
+      chanceReduction: 0.25,
       numAttacks: 1,
-      attackProbability: [1]
+      attackProbability: [1],
+      running: false
     }
+  }
+
+  modifyOtherStateVariable(tgtVar, value) {
+    if (value === '') {
+      value = 0;
+    }
+
+    const newState = this.state;
+    newState[tgtVar] = value;
+    this.setState(newState);
   }
 
   addAttack() {
@@ -67,8 +81,8 @@ class App extends Component {
   buildNumAttacksDropdownRows() {
     const output = []
     output.push(<tr>
-      <td><label>Number of Attacks:</label></td>
-      <td><i>Number</i></td>
+      <td></td>
+      <td><label>Number of Attacks</label></td>
       <td><i>Probability as Decimal (ex: 0.5)</i></td>
     </tr>)
     output.push(<tr>
@@ -99,26 +113,75 @@ class App extends Component {
     return output;
   }
 
+  runSimulation() {
+    // Disable
+    this.setState({running: true})
+
+    // Validate Num Simulations
+    const numSimul = parseInt(Number(this.state.numSimul));
+    if (isNaN(numSimul)) {
+      this.setState({running: false});
+      alert("Invalid Parameter: Number of Simulations")
+      return;
+    }
+
+    // Validate Max. Follow-ups
+    const maxFollowUp = parseInt(Number(this.state.maxFollowUp));
+    if (isNaN(maxFollowUp)) {
+      this.setState({running: false});
+      alert("Invalid Parameter: Maximum Follow-ups")
+      return;
+    }
+
+    // Validate Reduction Chance
+    const chanceReduction = parseFloat(Number(this.state.chanceReduction));
+    if (isNaN(chanceReduction)) {
+      this.setState({running: false});
+      alert("Invalid Parameter: Chance Reduction")
+      return;
+    }
+    
+
+
+    this.setState({running: false});
+  }
+
   render() {
     return (
       <div className="App">
         <h1>Hello world!</h1>
         <p>Please check out <a href="https://github.com/aturfah/eo-chaser-calc#readme">the project README</a> for details on what each argument means.</p>
-        <p>{this.state.numAttacks}</p>
-        <p>{this.state.attackProbability}</p>
-        <table>
+        <table className='param-table'>
           <tr>
-            <td><label>Maximum Follow-Ups:</label></td>
-            <td><input placeholder='ex: 3' /></td>
+            <td></td>
+            <td><label>Number of Simulations:</label></td>
+            <td><input value={this.state.numSimul}
+                 onChange={e => this.modifyOtherStateVariable('numSimul', e.target.value)} /></td>
             <td></td>
           </tr>
           <tr>
-            <td><label>Chance Reduction:</label></td>
-            <td><input placeholder='ex: 0.13' /></td>
+            <td></td>
+            <td><label>Maximum Follow-Ups:</label></td>
+            <td><input value={this.state.maxFollowUp}
+                       onChange={e => this.modifyOtherStateVariable('maxFollowUp', e.target.value)} /></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><label>Chance Reduction (as decimal):</label></td>
+            <td><input value={this.state.chanceReduction}
+                       onChange={e => this.modifyOtherStateVariable('chanceReduction', e.target.value)} /></td>
             <td></td>
           </tr>
           {this.buildNumAttacksDropdownRows()}
+          <tr>
+            <td colSpan={4}>
+              {(this.state.running ? <button disabled>Calculate!</button> :
+                                    <button onClick={() => this.runSimulation()}>Calculate!</button>)}
+            </td>
+          </tr>
         </table>
+        
       </div>
     );
   }

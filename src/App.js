@@ -23,6 +23,7 @@ class App extends Component {
     this.state = {
       numSimul: 5000,
       maxFollowUp: 4,
+      baseChaserChance: 1.00,
       chanceReduction: 0.13,
       numAttacks: 1,
       attackProbability: [1],
@@ -163,6 +164,14 @@ class App extends Component {
       return;
     }
 
+    // Verify that starting probability in (0, 1)
+    const baseChaserChance = parseFloat(Number(this.state.baseChaserChance));
+    if (isNaN(baseChaserChance) | baseChaserChance <= 0) {
+      this.setState({running: false})
+      alert("Invalid Parameter: Starting Chaser Chance")
+      return;
+    }
+
     // Now we do the sampling
     const results = [];
     const probCDF = cumulSum(this.state.attackProbability);
@@ -177,7 +186,7 @@ class App extends Component {
       
       // Now calculate for each one
       let numProcs = 0;
-      let remainingProb = 1;
+      let remainingProb = baseChaserChance;
       for (let i = 0; i < numAttacks; ++i) {
         const probDraw = Math.random();
         if (probDraw < remainingProb) {
@@ -275,6 +284,13 @@ class App extends Component {
             <td><label>Chance Reduction (as decimal):</label></td>
             <td><input value={this.state.chanceReduction}
                        onChange={e => this.modifyOtherStateVariable('chanceReduction', e.target.value)} /></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><label>Starting Chaser Chance (as decimal):</label></td>
+            <td><input value={this.state.baseChaserChance}
+                       onChange={e => this.modifyOtherStateVariable('baseChaserChance', e.target.value)} /></td>
             <td></td>
             <td></td>
           </tr>
